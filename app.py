@@ -22,15 +22,12 @@ st.title("🌉 نظام المكتبة المساحية - مشروع الكبا�
 st.write("اختر الكوبري والعنصر الإنشائي لتنزيل الملفات مباشرة على جهازك:")
 st.divider()
 
-# 3. القوائم المنسدلة للكباري والعناصر
+# 3. القوائم المنسدلة
 bridge_categories = {
-    "كباري IC Bridges": (
-        [f"IC_{i}" for i in range(13, 21)],
-        "IC_Bridges",
-    ),
-    "كباري UB Bridges": ([f"UB_{i}" for i in range(1, 7)], "UB_Bridges"),
-    "كباري OB Bridges": ([f"OB_{i}" for i in range(72, 81)], "OB_Bridges"),
-    "كباري FB Bridges": ([f"FB_{i}" for i in range(1, 15)], "FB_Bridges"),
+    "كباري IC Bridges": [f"IC_{i}" for i in range(13, 21)],
+    "كباري UB Bridges": [f"UB_{i}" for i in range(1, 7)],
+    "كباري OB Bridges": [f"OB_{i}" for i in range(72, 81)],
+    "كباري FB Bridges": [f"FB_{i}" for i in range(1, 15)],
 }
 
 structural_elements = [
@@ -48,29 +45,34 @@ structural_elements = [
 selected_cat_label = st.selectbox(
     "📌 1. اختر فئة الكوبري:", list(bridge_categories.keys())
 )
-bridges_list, cat_folder = bridge_categories[selected_cat_label]
-
-selected_bridge = st.selectbox("🌉 2. اختر رقم الكوبري:", bridges_list)
+selected_bridge = st.selectbox(
+    "🌉 2. اختر رقم الكوبري:", bridge_categories[selected_cat_label]
+)
 
 selected_elem_tuple = st.selectbox(
     "🏗️ 3. اختر العنصر الإنشائي:",
     structural_elements,
     format_func=lambda x: x[0],
 )
-elem_folder = selected_elem_tuple[1]
+elem_folder_name = selected_elem_tuple[1]
 
 st.divider()
-
-# 4. مسار المجلد داخل المستودع
-target_path = os.path.join(
-    "Survey_Bridges_Database", cat_folder, selected_bridge, elem_folder
-)
-
 st.success(f"🎯 **المحدد:** {selected_bridge} ⬅️ {selected_elem_tuple[0]}")
 st.markdown("### 📥 الملفات المتاحة للتحميل المباشر:")
 
-# 5. قراءة الملفات وعرض زر التحميل المباشر لكل ملف
-if os.path.exists(target_path):
+
+# دالة للبحث عن المجلد في كامل المشروع بغض النظر عن المسار
+def find_folder(target_name):
+  for root, dirs, _ in os.walk("."):
+    if target_name in dirs:
+      return os.path.join(root, target_name)
+  return None
+
+
+# البحث عن المجلد المطلق
+target_path = find_folder(elem_folder_name)
+
+if target_path and os.path.exists(target_path):
   files = [
       f
       for f in os.listdir(target_path)
@@ -93,10 +95,12 @@ if os.path.exists(target_path):
             data=file_bytes,
             file_name=file_name,
             mime="application/octet-stream",
-            key=file_name,
+            key=file_full_path,
         )
       st.divider()
   else:
-    st.info("ℹ️ لا توجد ملفات مرفوعة داخل هذا العنصر حالياً.")
+    st.info("ℹ️ لا توجد ملفات داخل هذا المجلد حالياً.")
 else:
-  st.warning("⚠️ هذا المجلد لم يتم رفعه بعد على GitHub.")
+  st.warning(
+      f"⚠️ لم يتم العثور على مجلد باسم ({elem_folder_name}) في المشروع بعد."
+  )
