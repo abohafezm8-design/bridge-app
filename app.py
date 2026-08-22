@@ -1,13 +1,13 @@
 import streamlit as st
 
-# 1. إعدادات الصفحة الرئيسية
+# 1. إعدادات الصفحة
 st.set_page_config(
     page_title="المكتبة المساحية للكباري",
     page_icon="🌉",
     layout="centered"
 )
 
-# 2. تنسيق الواجهة لتكون باللغة العربية (من اليمين إلى اليسار)
+# 2. تنسيق الواجهة عربي (RTL)
 st.markdown("""
     <style>
     .stApp {
@@ -18,15 +18,18 @@ st.markdown("""
         direction: rtl;
         text-align: right;
     }
+    iframe {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. العنوان ورأس الصفحة
 st.title("🌉 نظام المكتبة المساحية - مشروع الكباري")
-st.write("اختر الكوبري والعنصر الإنشائي للوصول المباشر إلى ملفات الـ DXF والإحداثيات:")
+st.write("اختر الكوبري والعنصر الإنشائي لاستعراض وتحميل الملفات مباشرة من الموقع:")
 st.divider()
 
-# 4. بيانات الكباري والعناصر الإنشائية
+# 3. القوائم المنسدلة
 bridge_categories = {
     "كباري IC Bridges": [f"IC_{i}" for i in range(13, 21)],
     "كباري UB Bridges": [f"UB_{i}" for i in range(1, 7)],
@@ -46,18 +49,23 @@ structural_elements = [
     "09_New_Jersey (النيوجيرسي)"
 ]
 
-# 5. القوائم المنسدلة للاختيار
 selected_category = st.selectbox("📌 1. اختر فئة الكوبري:", list(bridge_categories.keys()))
 selected_bridge = st.selectbox("🌉 2. اختر رقم الكوبري:", bridge_categories[selected_category])
 selected_element = st.selectbox("🏗️ 3. اختر العنصر الإنشائي:", structural_elements)
 
 st.divider()
 
-# 6. عرض الاختيار الحالي
-st.success(f"🎯 **الطلب المحدد:** {selected_bridge} ⬅️ {selected_element}")
+st.success(f"🎯 **العنصر المحدد:** {selected_bridge} ⬅️ {selected_element}")
 
-# 7. رابط Google Drive المباشر والزر الخاص بالفتح
-drive_folder_url = "https://drive.google.com/drive/folders/1jibSpf7obK4z0ZC1zkDK9GNgU2GCjTDa?usp=sharing"
+# 4. Folder ID الرئيسي لقاعدة البيانات على Google Drive
+FOLDER_ID = "1jibSpf7obK4z0ZC1zkDK9GNgU2GCjTDa"
 
-st.markdown("### 📥 تنزيل الملفات:")
-st.link_button("📂 فتح مجلد الملفات على Google Drive", drive_folder_url, use_container_width=True)
+st.markdown("### 📥 الملفات المتاحة للتحميل:")
+
+# عرض مجلد Google Drive المباشر داخل شاشة الموقع
+embed_url = f"https://drive.google.com/embeddedfolderview?id={FOLDER_ID}#list"
+
+st.components.v1.html(
+    f'<iframe src="{embed_url}" width="100%" height="400" frameborder="0"></iframe>',
+    height=420
+)
