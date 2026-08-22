@@ -52,5 +52,4 @@ st.markdown("### 📥 الملفات المتاحة للتحميل:")
 st.info(f"اضغط أسفله للوصول لملفات ({selected_element}) الخاصة بـ ({selected_bridge}):")
 
 # رابط مباشر لفتح الفولدر المطلوب على Google Drive
-drive_folder_url = https://drive.google.com/drive/folders/1jibSpf7obK4z0ZC1zkDK9GNgU2GCjTDa?usp=sharing
-st.link_button("📂 فتح مجلد الملفات على Google Drive", drive_folder_url)
+drive_folder_url = "https://drive.google.com/drive/folders/ضع_الرابط_الخاص_بك_هنا"st.link_button("📂 فتح مجلد الملفات على Google Drive", drive_folder_url)
